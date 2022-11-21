@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+"""Este módulo se crea para hacer el proyecto final de la materia
+Introducción a la programación"""
+from random import randint
+import keyboard as kb
+
+
+def mainMenu():
+    # Esta funcion es el menu principal
+
+    print("           Grupo Batalla Naval")
+    print("______________________________________")
+    print("           ___Batalla Naval___")
+    print("======================================")
+    print("            Menu Principal")
+    print("======================================")
+
+    print("1.	Introducir nombre del jugador.")
+
+    print("______________________________________")
+
+    print("2.	Iniciar juego.")
+
+    print("______________________________________")
+
+    print("3.	Cerrar programa.")
+
+    print("______________________________________")
+    solicitud = int(input("Ingrese numero de opcion: "))
+    if solicitud == 1:
+        nombre = input("Ingrese su nombre: ") 
+        print("Hola ", nombre)
+        mainMenu()
+    if solicitud == 2:
+        main()
+    if solicitud == 3:
+        print("Fin del programa")
+        quit()
+    else:
+        print("ERROR: Selección Inválida")
+        mainMenu()
+
+
+# Tabla de la maquina 
+mBoard = [["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"],
+            ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"],
+            ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"],
+            ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"],
+            ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
+# Tabla que se le muestra al jugador
+pBoard = [["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"],
+            ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"],
+            ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"],
+            ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"],
+            ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"], ["O", "O", "O", "O", "O", "O", "O", "O", "O", "O"]]
+
+
+def imprimir_tabla(pBoard):
+    # Esta funcion es la que imprime la tabla que se le muestra al jugador
+
+    print("===========PJ===========")
+    print("  1 2 3 4 5 6 7 8 9 10")
+    row_number = 1
+    for row in pBoard:
+        print("%d %s" % (row_number, " ".join(row)))
+        row_number += 1
+
+
+def crear_barco_maquina(board):
+    # Esta funcion crea 10 posiciones de barcos aleatoriamente
+
+    for ship in range(10):
+        ship_row = randint(0, 9)
+        ship_column = randint(0, 9)
+        while board[ship_row][ship_column] == "B":
+            ship_row, ship_column = encontrar_barcos()
+        board[ship_row][ship_column] = "B"
+
+
+def encontrar_barcos():
+    # Esta funcion es la que deja al jugador buscar los barcos de la maquina
+
+    # Filas
+    row = input("Ingresa la fila del barco: ")
+    while row not in "123456789010" or int(row) < 1 or int(row) > 10:
+        print('No puedes ingresar este valor. Vuelve a intertarlo!')
+        row = input("Ingres la fila del barco: ")
+
+    # Columnas   
+    column = input("Ingresa la columna del barco: ")
+    while column not in "123456789010" or int(row) < 1 or int(row) > 10:
+        print('No puedes ingresar este valor. Vuelve a intertarlo!')
+        column = input("Ingresa la columna del barco: ")
+    return int(row) - 1, int(column) - 1
+
+
+def contador_golpes(board):
+    # Esta funcion toma registro de cuando un barco es derribado
+
+    count = 0
+    for row in board:
+        for column in row:
+            if column == "D":
+                count += 1
+    return count
+
+
+def main():
+    # Esta funcion es la que chequea las condiciones para que el jugador pueda ganar
+
+    crear_barco_maquina(mBoard)
+
+    Barcos = 10
+    Contador = 0
+
+    while Barcos > 1:
+        print('Ingresa la posicion de los barcos')
+        imprimir_tabla(pBoard)
+        row, column = encontrar_barcos()
+
+        if pBoard[row][column] == "X":
+            print("Escoge otra posicion")
+        elif mBoard[row][column] == "B":
+            print("Impacto!")
+            pBoard[row][column] = "D"
+            Barcos -= 1
+            Contador += 1
+            print("Has derribado " + str(Contador) + " Barcos!")
+        else:
+            print("Disparo invalido!")
+            pBoard[row][column] = "X"
+        if contador_golpes(pBoard) == 10:
+            print("Has ganado!")
+            break
+
+        if Barcos == 0:
+            print("Has derribado todos los barcos. Has ganado!")
+            print("Press + " 'Enter' " + key to go to the main menu or ")
+            while True:
+                if kb.read_key() == "enter":
+                    mainMenu()
+                    break
+                if kb.read_key() == "esc":
+                    quit()
+
+
+mainMenu()
